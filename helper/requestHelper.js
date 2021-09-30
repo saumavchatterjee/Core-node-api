@@ -12,7 +12,7 @@ requesthelper.reqestoption = (req,res)=>{
     const parsedUrl = url.parse(req.url, true);
     const pathname =  parsedUrl.pathname;
     const queryObject = parsedUrl.query;
-    const method = req.method;
+    const method = req.method.toLowerCase();
     const headers =  req.headers;
     const trimpath =  pathname.replace(/^\/+|\/+$/g,'');
 
@@ -26,27 +26,27 @@ requesthelper.reqestoption = (req,res)=>{
     }
 
     const selectedHandler = routes.route[trimpath] ? routes.route[trimpath]  : routes.route['notfound'];
+
     //console.log(selectedHandler);
-    selectedHandler(requestobject,(statuscode,data)=>{
-        res.writeHead(statuscode);
-        res.write(data);
-        res.end();
 
+    let body = "";
 
-    });
-    
-
-    let body='';
-
-    req.on('data',(chunk)=>{
+    req.on("data", (chunk) => {
         body += chunk;
-
     });
 
-    req.on('end',()=>{
-        console.log(body);
-    })
+    req.on("end", () => {
 
+        requestobject.body= JSON.parse(body);
+         selectedHandler(requestobject, (statuscode, data) => {
+           res.writeHead(statuscode);
+           res.write(data);
+           res.end();
+         });
+
+
+    });
+   res.end();
 }
 
 module.exports = requesthelper;
