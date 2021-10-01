@@ -39,14 +39,15 @@ requesthelper.reqestoption = (req,res)=>{
 
         requestobject.body= JSON.parse(body);
          selectedHandler(requestobject, (statuscode, data) => {
-           res.writeHead(statuscode);
-           res.write(data);
-           res.end();
-         });
+        res.writeHead(statuscode);
+        res.write(data);
+        res.end();
+        });
 
+         
 
     });
-   res.end();
+  // res.end();
 }
 
 module.exports = requesthelper;
