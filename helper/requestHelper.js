@@ -2,6 +2,7 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs');
 const routes = require('../routes');
+const { isjson } = require('../config');
 
 
 const requesthelper = {};
@@ -37,11 +38,16 @@ requesthelper.reqestoption = (req,res)=>{
 
     req.on("end", () => {
 
-        requestobject.body= JSON.parse(body);
-         selectedHandler(requestobject, (statuscode, data) => {
+        requestobject.body= isjson(body)?JSON.parse(body):{};
+
+        selectedHandler(requestobject, (statuscode, data) => {
+
+        data = typeof data   ==='object'? data : {};
+
+        const datastring = JSON.stringify(data);
+        res.setHeader('Content-Type', 'application/json');
         res.writeHead(statuscode);
-        res.write(data);
-        res.end();
+        res.end(datastring);
         });
 
          

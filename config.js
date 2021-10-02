@@ -16,4 +16,14 @@ config.hash = (password) =>{
 
 }
 
+config.isjson = (string) =>{
+  try{
+    JSON.parse(string);
+  }
+  catch{
+    return false;
+  }
+  return true;
+}
+
 module.exports = config;
