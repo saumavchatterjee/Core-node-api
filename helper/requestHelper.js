@@ -2,6 +2,7 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs');
 const routes = require('../routes');
+const {isJSON} = require('../config');
 
 
 const requesthelper = {};
@@ -37,7 +38,7 @@ requesthelper.reqestoption = (req,res)=>{
 
     req.on("end", () => {
 
-        requestobject.body= JSON.parse(body);
+        requestobject.body = isJSON(body) ? JSON.parse(body) : {};
          selectedHandler(requestobject, (statuscode, data) => {
         res.writeHead(statuscode);
         res.write(data);

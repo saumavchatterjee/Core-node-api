@@ -60,7 +60,7 @@ userHandeler._user.post = (resquestobj, callback)=>{
       username,
       phone,
       email,
-      password: hash(password),
+      password: hash(password)
     };
 
     datamodel.read('users', phone, (err, data) => {
