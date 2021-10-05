@@ -16,17 +16,6 @@ config.hash = (password) =>{
 
 }
 
-<<<<<<< HEAD
-config.isJSON= (string) =>{
-
-      try {
-        JSON.parse(string);
-      } catch (e) {
-        return false;
-      }
-      return true;
-  
-=======
 config.isjson = (string) =>{
   try{
     JSON.parse(string);
@@ -35,7 +24,6 @@ config.isjson = (string) =>{
     return false;
   }
   return true;
->>>>>>> f0ad83eb678a2c3e69c027de9696f6cb7cd70f1a
 }
 
 module.exports = config;
