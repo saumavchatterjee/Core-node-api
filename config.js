@@ -26,4 +26,15 @@ config.isjson = (string) =>{
   return true;
 }
 
+config.tokengenerate= (length) =>{
+  let token="";
+  const allowedcharacter = "abcedfghijklmnopurestuvwxyz0123456789";
+  for(let i=1; i <= length ; i++){
+    token = token + allowedcharacter.charAt(Math.floor(Math.random() * 36));
+  }
+
+  return token;
+
+}
+
 module.exports = config;

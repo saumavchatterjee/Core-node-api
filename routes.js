@@ -1,5 +1,7 @@
 const aboutHandeler = require("./handler/about");
 const notfound = require("./handler/notfoud");
+const { token } = require("./handler/token");
+const tokenHandeler = require("./handler/token");
 const userHandeler = require("./handler/user");
 
 
@@ -11,7 +13,8 @@ routes.route = {
     
     'about':aboutHandeler.about,
     'user':userHandeler.user,
-    'notfound': notfound.pagenotfound
+    'notfound': notfound.pagenotfound,
+    'token':tokenHandeler.token
 
 }
 
