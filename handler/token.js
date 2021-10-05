@@ -104,5 +104,37 @@ tokenHandeler._token.delete = (resquestobj , callback)=>{
     
 }
 
+tokenHandeler._token.verify = ( token, phone, callback ) => {
+
+  
+
+    if(token){
+
+        datamodel.read('tokens',token,(err, data)=>{
+
+            if(!err){
+
+                if (
+                  JSON.parse(data).phone === phone &&
+                  JSON.parse(data).expires > Date.now()
+                ) {
+                   
+                    callback(true);
+                } else {
+                  callback(false);
+                }
+
+
+            }else {
+              callback(false)
+            }
+        })
+
+    }else {
+     callback(false);
+    }
+    
+}
+
 module.exports = tokenHandeler;
 

@@ -1,5 +1,6 @@
 const { hash } = require("../config");
 const datamodel = require("../lib/datamodel");
+const {_token} = require("./token");
 
 const userHandeler = {};
 
@@ -64,41 +65,66 @@ userHandeler._user.post = (resquestobj, callback)=>{
         console.log(err);
         datamodel.create('users', phone, userdata, (err) => {
           if (!err) {
-            callback(200, "{msg:User created Successfuly!}");
+            callback(200, {msg:"User created Successfuly!"});
           }else {
              
-               callback(500, "Unable to create Account!");
+               callback(500, {error:"Unable to create Account!"});
           }
         });
       } else {
-        callback(400, "User Already Exists!");
+        callback(400, {error:"User Already Exists!"});
       }
     });
   } else {
-    callback(406, "Wrong input data!");
+    callback(406, {error:"Wrong input data!"});
   }
 }
 userHandeler._user.get = (resquestobj , callback)=>{
 
   const phone =
     typeof resquestobj.queryObject.phone === "string" &&
-    resquestobj.queryObject.phone.trim().length == 11
+    resquestobj.queryObject.phone.trim().length >= 11
       ? resquestobj.queryObject.phone
       : false;
 
+    const token =
+      typeof resquestobj.headers.token === "string" &&
+      resquestobj.headers.token.length > 0
+        ? resquestobj.headers.token
+        : false;    
+
     if (phone){
 
-      datamodel.read('users',phone,(err, data)=>{
-     
-        if(!err && data){
-          const userdata = { ...JSON.parse(data)};
-          delete userdata.password;
-          callback(200,userdata);
-        }else {
-          callback(404,{error:"User not found"});
-        }
+   _token.verify(token, phone, (tokenid)=>{
+      
+      if(tokenid){
 
-      })
+            datamodel.read("users", phone, (err, data) => {
+              if (!err && data) {
+                
+
+                const userdata = { ...JSON.parse(data) };
+
+                delete userdata.password;
+
+                callback(200, userdata);
+              } else {
+                callback(404, { error: "User not found" });
+              }
+            });
+
+      }else 
+      {
+        callback(403, { eroor: "Invalid Authentication!" });
+      }
+
+   });
+
+   
+
+    
+
+  
 
     }else {
       callback(400,{error:"Wrong Data!"});
