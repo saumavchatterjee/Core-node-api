@@ -26,7 +26,7 @@ config.isjson = (string) =>{
   return true;
 }
 
-config.tokengenerate= (length) =>{
+config.serialgenerate= (length) =>{
   let token="";
   const allowedcharacter = "abcedfghijklmnopurestuvwxyz0123456789";
   for(let i=1; i <= length ; i++){

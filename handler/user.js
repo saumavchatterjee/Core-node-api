@@ -180,10 +180,15 @@ userHandeler._user.put = (resquestobj , callback)=>{
         datamodel.update('users',phone,data,(err)=>{
 
           if(!err){
+
             callback(200,{msg:"User data updated sucessfully!"});
+
           }
           else {
+
             callback(500,{erro:"Try again later!"});
+
+            
           }
         })
 
@@ -191,6 +196,7 @@ userHandeler._user.put = (resquestobj , callback)=>{
         callback(404,{error:"User not found!"});
       }
     });
+
 
   }else {
     callback(400,{error:"Invalid input!"});

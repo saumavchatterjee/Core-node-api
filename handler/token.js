@@ -1,4 +1,4 @@
-const { hash, tokengenerate } = require("../config");
+const { hash, serialgenerate } = require("../config");
 const datamodel = require("../lib/datamodel");
 
 const tokenHandeler = {};
@@ -34,7 +34,7 @@ tokenHandeler._token.post = (resquestobj, callback)=>{
             if(!err && userdata){
 
                 if (hash(password)=== JSON.parse(userdata).password){
-                    let token = tokengenerate(20)
+                    let token = serialgenerate(20);
                     let tokendata = {
                         phone, 
                         token,
