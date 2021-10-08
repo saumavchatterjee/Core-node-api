@@ -26,13 +26,46 @@ checkHandeler._check ={};
 
 checkHandeler._check.post = (resquestobj, callback)=>{
 
-  const protocol = typeof resquestobj.protocol ==='string' && ['http','https'].indexOf(resquestobj.protocol) > -1 ? resquestobj.protocol : false;
-  const method= typeof resquestobj.method ==='string' && ['GET','POST'].indexOf(resquestobj.method) > -1 ? resquestobj.method : false;
-  const url = typeof resquestobj.url ==='string' && resquestobj.url.length > 0 ? resquestobj.url : false;
-  const successcodes = typeof resquestobj.successcodes ==='object' && resquestobj.successcodes instanceof Array ? resquestobj.successcodes : false;
-  const timeout = typeof resquestobj.timeout ==='number' && resquestobj.timeout > 0 && resquestobj.timeout < 5  && resquestobj.timeout% 2 == 0 ? resquestobj.timeout : false;
-  const token = typeof resquestobj.headers.token ==='string' && resquestobj.headers.token > 0 ? resquestobj : false;
+  console.log(resquestobj);
+
+  const protocol =
+    typeof resquestobj.body.protocol === "string" &&
+    ["http", "https"].indexOf(resquestobj.body.protocol) > -1
+      ? resquestobj.body.protocol
+      : false;
+  const method =
+    typeof resquestobj.body.method === "string" &&
+    ["GET", "POST"].indexOf(resquestobj.body.method) > -1
+      ? resquestobj.body.method
+      : false;
+  const url =
+    typeof resquestobj.body.url === "string" && resquestobj.body.url.length > 0
+      ? resquestobj.body.url
+      : false;
+  const successcodes =
+    typeof resquestobj.body.successcodes === "object" &&
+    resquestobj.body.successcodes instanceof Array
+      ? resquestobj.body.successcodes
+      : false;
+  const timeout =
+    typeof resquestobj.body.timeout === "number" &&
+    resquestobj.body.timeout > 0 &&
+    resquestobj.body.timeout < 5 &&
+    resquestobj.body.timeout % 2 == 0
+      ? resquestobj.body.timeout
+      : false;
+  const token =
+    typeof resquestobj.headers.token === "string" &&
+    resquestobj.headers.token.length > 0
+      ? resquestobj.headers.token
+      : false;
   
+  console.log(protocol);
+  console.log(method);
+  console.log(url);
+  console.log(successcodes);
+  console.log(token);
+
   if(protocol && method && url && successcodes && timeout){
 
       if (token) {
@@ -40,31 +73,91 @@ checkHandeler._check.post = (resquestobj, callback)=>{
           if (tokendata) {
             const phone = JSON.parse(tokendata).phone;
 
-            _token.verify(token, phone, (tokenobj) => {
-              if (tokenobj) {
+            datamodel.read('users',phone,(err,userdata)=>{
 
-                let checkid =  serialgenerate(20);
+              if(!err && userdata){
 
-                const checkdata = {
+                let userobj = JSON.parse(userdata);
 
-                  checkid,
-                  phone,
-                  protocol,
-                  method,
-                  url,
-                  successcodes,
-                  timeout
-                  
-                };
+                  _token.verify(token, phone, (verified) => {
+                    if (verified) {
+                      let checkid = serialgenerate(20);
+
+                      let checksobj =
+                        typeof userobj.checks === "object" &&
+                        userobj.checks instanceof Array
+                          ? userobj.checks
+                          : [];
+                     
+                      const checkdata = {
+                        checkid,
+                        phone,
+                        protocol,
+                        method,
+                        url,
+                        successcodes,
+                        timeout,
+                      };
+
+                      if (checksobj.length < 5) {
+                        datamodel.create(
+                          "checks",
+                          checkid,
+                          checkdata,
+                          (err) => {
+                            if (!err) {
+
+                              userobj.checks = checksobj;
+                             userobj.checks.push(checkid);
+
+                              datamodel.update(
+                                "users",
+                                phone,
+                                userobj,
+                                (err) => {
+                                  if (!err) {
+                                    callback(200, {
+                                      msg: "Added Successfully",
+                                    });
+                                  } else {
+                                    callback(500, { msg: "Server Error!" });
+                                  }
+                                }
+                              );
+                            } else {
+                              callback(503, {
+                                error: "There is problem in server side!",
+                              });
+                            }
+                          }
+                        );
+                      } else {
+                        callback(400, {
+                          error: "You have reached maximum no of Limit.",
+                        });
+                      }
 
 
+                    } else {
+                      callback(403, {
+                        error: "Authorization Error or token expired.",
+                      });
+                    }
+                  });
 
-              } else {
-                callback(403, {
-                  error: "Authorization Error or token expired.",
-                });
+
+              }else 
+              {
+                 callback(404, { error: "User Not Found!" });
               }
-            });
+
+            })
+
+
+           
+         
+
+
           } else {
             callback(403, { error: "Authorization Error! Invalid token." });
           }
@@ -88,6 +181,7 @@ checkHandeler._check.get = (resquestobj , callback)=>{
      
 }
 checkHandeler._check.put = (resquestobj , callback)=>{
+
 
     
 }
